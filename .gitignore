@@ -21,3 +21,13 @@
 *.i*86
 *.x86_64
 *.hex
+
+# CCS Project
+.ccsproject
+.cproject
+.project
+.setting
+org.*
+lnk_msp430g2553.cmd
+MSP430G2553.ccxml
+readme.txt
