@@ -23,3 +23,10 @@ PhantomMicSelector
 * Code Composer Studio 5
 * 개발언어 : C Language
 
+### 시스템 구성
+![TS3A5017](http://audiocookie.com/blog/wp-content/uploads/2014/04/mic_sel_1-2048x1618.jpg)
+![Connections](http://audiocookie.com/blog/wp-content/uploads/2014/04/mic_sel_2-2048x1354.jpg)
+![System](http://audiocookie.com/blog/wp-content/uploads/2014/04/mic_sel_3.jpg)
+
+### 아두이노로 미리 만들어 보기
+![PhantomMicSelector Arudino](http://audiocookie.com/blog/wp-content/uploads/2014/04/pms.jpg)
