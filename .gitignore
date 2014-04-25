@@ -3,7 +3,8 @@
 *.xml
 *.opt
 *.pp
-*.ml
+*.mk
+*.launch
 
 # Object files
 *.o
