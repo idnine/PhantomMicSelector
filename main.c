@@ -22,6 +22,9 @@ const int		SW3  = 0x40;	// P1.6
 const int		SW4  = 0x80;	// P1.7
 
 volatile int	selectCh = 1;
+volatile int	currCh = 1;
+volatile int	isMute = 0;
+volatile int	isChange = 0;
 
 /*
  * main.c
@@ -71,6 +74,19 @@ __interrupt void selButton(void) {
 	} else if(P1IFG & SW4) {
 		selectCh = 4;
 	}
+	if(currCh == selectCh) {
+		if(isMute) {
+			isMute = 0;
+			P2OUT &= ~LED4;
+		} else {
+			isMute = 1;
+			P2OUT |= LED4;
+		}
+	} else {
+		P2OUT |= LED4;
+		currCh = selectCh;
+	}
 	P2OUT &= ~(0x02 << selectCh);
+	for(isChange=20000; isChange > 10000; isChange--);
 	P1IFG &= ~(SW1 + SW2 + SW3 + SW4);
 }
