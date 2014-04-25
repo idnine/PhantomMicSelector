@@ -1,3 +1,10 @@
+# Debug files
+*.map
+*.xml
+*.opt
+*.pp
+*.ml
+
 # Object files
 *.o
 *.ko
