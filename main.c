@@ -1,6 +1,6 @@
 /*
  * Phantom Power MICs Selector
- * 2014. 4.25
+ * April 25, 2014
  * by Koo Jonghoe @ AudioCookie.com
  *
  * https://github.com/idnine/PhantomMicSelector
@@ -22,9 +22,6 @@ const int		SW3  = 0x40;	// P1.6
 const int		SW4  = 0x80;	// P1.7
 
 volatile int	selectCh = 1;
-volatile int	currCh = 1;
-volatile int	isMute = 0;
-volatile int	isChange = 0;
 
 /*
  * main.c
@@ -50,12 +47,28 @@ int main(void) {
 
 	// Initial Value Output
 	P2OUT |= (LED1 + LED2 + LED3 + LED4);	// All LED Off (Active Low)
-	P1OUT |= EN;							// TS3A5017 Mute
-	P2OUT &= ~(IN1 + IN2);					// Ch.1 Selected
+
+	// Default Set CH.1
+	P1OUT &= ~EN;
+	P2OUT &= ~(IN1 + IN2);
 	P2OUT &= ~LED1;
+
+	// Timer Setup
+	TACTL = TASSEL_2 + MC_1 + ID_3;
+	TACCR0 = 20000;
+	TACCTL0 &= ~CCIE;						// Timer Off
 
 	// Global Interrupt Start, System goes Sleep(Power Save) Mode
 	_BIS_SR(LPM0_bits + GIE);
+}
+
+// =================================================
+//                Interrupt: Timer
+// =================================================
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void Timer_A(void)
+{
+	P2OUT ^= (0x02 << selectCh);
 }
 
 // =================================================
@@ -65,6 +78,7 @@ int main(void) {
 __interrupt void selButton(void) {
 	// All LED Off
 	P2OUT |= (LED1 + LED2 + LED3 + LED4);
+
 	if(P1IFG & SW1) {
 		selectCh = 1;
 	} else if(P1IFG & SW2) {
@@ -74,19 +88,26 @@ __interrupt void selButton(void) {
 	} else if(P1IFG & SW4) {
 		selectCh = 4;
 	}
-	if(currCh == selectCh) {
-		if(isMute) {
-			isMute = 0;
+	_delay_cycles(10000);
+	switch(selectCh) {
+		case 1 :
+			P2OUT &= ~LED1;
+			P2OUT &= ~(IN1 + IN2);
+			break;
+		case 2 :
+			P2OUT &= ~LED2;
+			P2OUT |= IN1;
+			P2OUT &= ~IN2;
+			break;
+		case 3 :
+			P2OUT &= ~LED3;
+			P2OUT &= ~IN1;
+			P2OUT |= IN2;
+			break;
+		case 4 :
 			P2OUT &= ~LED4;
-		} else {
-			isMute = 1;
-			P2OUT |= LED4;
-		}
-	} else {
-		P2OUT |= LED4;
-		currCh = selectCh;
+			P2OUT |= (IN1 + IN2);
+			break;
 	}
-	P2OUT &= ~(0x02 << selectCh);
-	for(isChange=20000; isChange > 10000; isChange--);
 	P1IFG &= ~(SW1 + SW2 + SW3 + SW4);
 }
