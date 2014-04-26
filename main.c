@@ -24,7 +24,6 @@ const int	SW4  = 0x80;	// P1.7
 
 volatile int	selectCh = 1;
 volatile int	currCh = 1;
-volatile int	isChange = 0;
 volatile int	isMute = 0;
 
 /*
@@ -131,8 +130,8 @@ __interrupt void selButton(void) {
 			P2OUT |= (IN1 + IN2);
 			break;
 		}
-		_delay_cycles(100000);			// UN-MUTE
-		P1OUT &= ~EN;
+		_delay_cycles(100000);
+		P1OUT &= ~EN;				// UN-MUTE
 	}
 	P1IE |= (SW1 + SW2 + SW3 + SW4);		// Switch Interrupt Enable
 	P1IFG &= ~(SW1 + SW2 + SW3 + SW4);
